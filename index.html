@@ -19,6 +19,25 @@
             <div id="lotto-numbers" class="lotto-numbers-container"></div>
         </div>
 
+        <div class="container logo-search-section">
+            <h2>Logo Similarity Search</h2>
+            <p>Upload a logo to find similar ones.</p>
+            <div id="drop-zone" class="drop-zone">
+                <span class="drop-zone__prompt">Drop logo file here or click to upload</span>
+                <input type="file" name="logoFile" id="logo-input" class="drop-zone__input" accept="image/*">
+            </div>
+            <div id="image-preview" class="image-preview" style="display: none;">
+                <img src="" alt="Preview" id="preview-img">
+                <button id="analyze-btn">Analyze Logo</button>
+            </div>
+            <div id="analysis-results" class="analysis-results" style="display: none;">
+                <h3>Similar Logos Found</h3>
+                <div class="results-grid" id="results-grid">
+                    <!-- Results will be injected here -->
+                </div>
+            </div>
+        </div>
+
         <div class="container inquiry-section">
             <h2>Affiliate Inquiry</h2>
             <form action="https://formspree.io/f/mpqkdvpl" method="POST" id="inquiry-form">
