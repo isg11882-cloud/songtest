@@ -1,7 +1,28 @@
-
+22
 document.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
     const lottoNumbersContainer = document.getElementById('lotto-numbers');
+    const themeBtn = document.getElementById('theme-btn');
+    const body = document.body;
+
+    // Theme logic
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        body.setAttribute('data-theme', 'dark');
+        themeBtn.textContent = 'Light Mode';
+    }
+
+    themeBtn.addEventListener('click', () => {
+        if (body.hasAttribute('data-theme')) {
+            body.removeAttribute('data-theme');
+            themeBtn.textContent = 'Dark Mode';
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            themeBtn.textContent = 'Light Mode';
+            localStorage.setItem('theme', 'dark');
+        }
+    });
 
     const colors = [
         '#ff6b6b', '#f06595', '#cc5de8', '#845ef7', '#5c7cfa', '#339af0',
