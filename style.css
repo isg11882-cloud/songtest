@@ -68,10 +68,14 @@ header, footer {
     transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
-.inquiry-section {
+.inquiry-section, .comment-section {
     margin-top: 40px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
+}
+
+.comment-section {
+    padding: 20px;
 }
 
 .inquiry-section h2 {

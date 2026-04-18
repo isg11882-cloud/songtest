@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
     const lottoNumbersContainer = document.getElementById('lotto-numbers');
