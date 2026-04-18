@@ -52,7 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from(numbers).sort((a, b) => a - b);
     }
 
-    // Logo Similarity Search Logic
+    // --- Logo Similarity Search Logic (Teachable Machine Integration) ---
+    const URL = "https://teachablemachine.withgoogle.com/models/9zz7ofRNd/";
+    let model, maxPredictions;
+
     const dropZone = document.getElementById('drop-zone');
     const logoInput = document.getElementById('logo-input');
     const imagePreview = document.getElementById('image-preview');
@@ -60,6 +63,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const analyzeBtn = document.getElementById('analyze-btn');
     const analysisResults = document.getElementById('analysis-results');
     const resultsGrid = document.getElementById('results-grid');
+
+    // Load the image model
+    async function initModel() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+    }
 
     if (dropZone) {
         dropZone.addEventListener('click', () => logoInput.click());
@@ -106,35 +117,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (analyzeBtn) {
         analyzeBtn.addEventListener('click', async () => {
-            analyzeBtn.textContent = 'Analyzing...';
+            analyzeBtn.textContent = 'Loading Model...';
             analyzeBtn.disabled = true;
 
-            // --- MODEL INTEGRATION PLACEHOLDER ---
-            // 이곳에 만드신 모델(API 또는 TensorFlow.js)을 연결하시면 됩니다.
-            // 예: const results = await myLogoModel.predict(previewImg);
-            
-            setTimeout(() => {
-                showMockResults();
+            try {
+                if (!model) await initModel();
+                
+                analyzeBtn.textContent = 'Analyzing...';
+                const prediction = await model.predict(previewImg);
+                
+                // Sort predictions by probability
+                prediction.sort((a, b) => b.probability - a.probability);
+                
+                displayResults(prediction);
+            } catch (error) {
+                console.error("Analysis failed:", error);
+                alert("Model analysis failed. Please try again.");
+            } finally {
                 analyzeBtn.textContent = 'Analyze Logo';
                 analyzeBtn.disabled = false;
-            }, 1500);
+            }
         });
     }
 
-    function showMockResults() {
+    function displayResults(predictions) {
         resultsGrid.innerHTML = '';
         analysisResults.style.display = 'block';
         
-        // 더미 결과 생성 (나중에 실제 모델 결과로 대체)
-        for (let i = 1; i <= 4; i++) {
-            const div = document.createElement('div');
-            div.classList.add('result-item');
-            div.innerHTML = `
-                <img src="https://via.placeholder.com/150?text=Logo+${i}" alt="Result ${i}">
-                <span>Match: ${99 - i * 2}%</span>
-            `;
-            resultsGrid.appendChild(div);
-        }
+        // 상위 4개의 결과만 표시
+        predictions.slice(0, 4).forEach(p => {
+            const probability = (p.probability * 100).toFixed(1);
+            if (probability > 0) { // 확률이 0인 것은 제외
+                const div = document.createElement('div');
+                div.classList.add('result-item');
+                div.innerHTML = `
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">🏷️</div>
+                    <span style="font-size: 1rem; color: var(--primary-color);">${p.className}</span>
+                    <span style="font-size: 0.8rem; opacity: 0.7;">Match: ${probability}%</span>
+                `;
+                resultsGrid.appendChild(div);
+            }
+        });
     }
 });
 
